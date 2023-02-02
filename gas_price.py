@@ -1,12 +1,12 @@
 from join import api_eth
 from loguru import logger
-import urllib.request
 from time import sleep
 
 class Gas:
-    def gas_price(self):
+
+    def gas_price(self, response):
         try:
-            response = eval(urllib.request.urlopen(f'https://api.etherscan.io/api?module=gastracker&action=gasoracle&apikey={api_eth}').read())
+            response = eval(response.text)
             logger.info(response['result']['ProposeGasPrice'])
             # logger.info(type(response['result']['ProposeGasPrice']))
             if int(response['result']['ProposeGasPrice'])<14:

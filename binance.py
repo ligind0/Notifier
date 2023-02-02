@@ -1,17 +1,19 @@
 from bs4 import BeautifulSoup
 from requests_html import AsyncHTMLSession
 from loguru import logger
+from time import sleep
 
 class Binance:
-    def binance_listing(self, soup_binance):
+    def binance_listing(self, response):
         try:
+            soup_binance = self.make_soup(self.make_html(response))
             binance_list = soup_binance.find_all('div', {"class": "css-k5e9j4"})
             firstlink = binance_list[0].a['href']
             urls = []
             urls.append(f"{self.url_binance}{firstlink}")
             all_responses = self.asession.run(*[lambda url=url: self.get_url(url) for url in urls])
             for response in all_responses:
-                soup_test = self.make_soup(response)
+                soup_test = self.make_soup(self.make_html(response['response']))
                 info_list = soup_test.find_all('strong', {"class": "css-1lohbqv"})
                 info = info_list[1].parent.text
                 logger.debug("It's fine I'm working")
@@ -23,3 +25,4 @@ class Binance:
                 self.temp_binance = info
         except Exception as e:
             logger.error(e)
+            sleep(30)
